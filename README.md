@@ -21,7 +21,7 @@ In most languages there is a signficant and meaningful distinction between maps 
 * This provides more flexibility for arrays of various data structures and nested reuse of data structures than is possible with column-based homogenous tables like those of [RFC-8746](https://tools.ietf.org/html/rfc8746).
 * This aligns well with [CDDL](https://tools.ietf.org/html/rfc8610) which also has the concept of records, and allows for decoders to quickly pair records with structures declared in a CDDL definition.
 
-This tag definition uses an approach of declaring the id of records when defined, which gives encoders more flexibility in how they allocate,  track, and reuse the ids.
+This tag definition uses an approach of declaring the id of records when defined, which gives encoders more flexibility in how they allocate, track, and reuse the ids.
 
 ## Description
 
@@ -38,32 +38,32 @@ If the array of property values in a referenced record has fewer elements than t
 Let's consider how we could encode the following JSON using CBOR with the record tags:
 ```
 [
-	{ "name": "one", "value": 1 },
-	{ "name": "two", "value": 2 },
-	{ "name": "three", "value": 3 }
+   { "name": "one", "value": 1 },
+   { "name": "two", "value": 2 },
+   { "name": "three", "value": 3 }
 ]
 ```
 We can encode this with an array, and using a defined-record for the first element in the array:
 ```
-83					# array(3)
-	d8	69			# tag(105) - defined-record
-		84			# array(4)
-			82		# array(2) - record definition
-				64 "name"	# string("name")
-				65 "value"	# string("value")
-			00		# unsigned(0) - id of 0
-			63 "one"	# string("one")
-			01		# unsigned(1)
-	d8	6a			# tag(106) - referenced-record
-		83			# array(3)
-			00		# unsigned(0) - id of 0
-			63 "two"	# string("two")
-			02		# unsigned(2)
-	d8	6a			# tag(106) - referenced-record
-		83			# array(3)
-			00		# unsigned(0) - id of 0
-			65 "three"	# string("three")
-			03		# unsigned(3)
+83               # array(3)
+   d8 69         # tag(105) - defined-record
+      84         # array(4)
+         82      # array(2) - record definition
+            64 "name" # string("name")
+            65 "value" # string("value")
+         00      # unsigned(0) - id of 0
+         63 "one" # string("one")
+         01      # unsigned(1)
+   d8 6a         # tag(106) - referenced-record
+      83         # array(3)
+         00      # unsigned(0) - id of 0
+         63 "two" # string("two")
+         02      # unsigned(2)
+   d8 6a         # tag(106) - referenced-record
+      83         # array(3)
+         00      # unsigned(0) - id of 0
+         65 "three" # string("three")
+         03      # unsigned(3)
 ```
 
 ### Considerations and Alternatives
