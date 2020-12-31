@@ -1,13 +1,12 @@
 ## Registration Information
 
-* Tag: 105 (defined-record)
+### Tag: 105 (defined-record)
 * Data Item: array
 * Semantics: Identify and define a sequence of property names for a record, and use that record definition
 * Reference: https://github.com/kriszyp/cbor-records
 * Contact: Kris Zyp <kriszyp@gmail.com>
 
-
-* Tag: 106 (referenced-record)
+### Tag: 106 (referenced-record)
 * Data Item: array
 * Semantics: Use a predefined record definition to provide the property values from an array to construct a record.
 * Reference: https://github.com/kriszyp/cbor-records
@@ -19,6 +18,7 @@ In most languages there is a signficant and meaningful distinction between maps 
 * This tag provides an explicit indicator of a record structure. This is somewhat complementary to tag [259 (Map datatype with key-value operations)](https://github.com/shanewholloway/js-cbor-codec/blob/master/docs/CBOR-259-spec--explicit-maps.md), but gives a clear, unambiguous indication of records.
 * Defining and referencing/reusing a record structure is a much more space efficient encoding. Many data structures may include record/objects with the same structure, and reserializing their entire set of property names for each instance is very inefficient. While the [stringref](http://cbor.schmorp.de/stringref) helps mitigate this, being able to simply reference the whole record structure is more efficient. The use of record structures can substantially decrease the size of encoded data structures.
 * Defining and referencing/reusing a record structure can also be much more performant. Besides the performance benefits of simply encoding fewer bytes, decoders can take advantage of optimizations based on knowing the data structure that will be used before the reading the property values, which can yield significant benefits in many languages/environments.
+* This provides more flexibility for arrays of various data structures and nested reuse of data structures than is possible with column-based homogenous tables like those of [RFC-8746](https://tools.ietf.org/html/rfc8746).
 * This aligns well with [CDDL](https://tools.ietf.org/html/rfc8610) which also has the concept of records, and allows for decoders to quickly pair records with structures declared in a CDDL definition.
 
 This tag definition uses an approach of declaring the id of records when defined, which gives encoders more flexibility in how they allocate,  track, and reuse the ids.
@@ -30,6 +30,8 @@ To encode and define a new record/object structure and an instance use the defin
 To reuse the record definition and later create another record/object instance using the same set of property names, use the referenced-record tag (106). This can encode a record/object with the same structure, and referencing the previously defined record definition. The value for this tag should be an array, with N+1 elements, where N is the number of properties in the record. The first element should be the id of the record definition to use. All subsequent elements in the array should be the property values of the current record being encoded, corresponding to the property names, by position, as defined in the record definition array. The decoder should return the record/object instance.
 
 A defined-record can use an id of a previously defined record, in which case the previously defined record is discarded and replaced by the new record definition. Encoders are encouraged to limit the number of ids used and cycle through ids as necessary to limit the total number of ids tracked at a time.
+
+If the array of property values in a referenced record has fewer elements than the array property names, only the subset of property names that positionally align should be used.
 
 ## Examples
 
@@ -63,3 +65,9 @@ We can encode this with an array, and using a defined-record for the first eleme
 			65 "three"	# string("three")
 			03		# unsigned(3)
 ```
+
+### Considerations and Alternatives
+
+* There are certainly alternate ways of structuring the arrays that could be used, but this attempts to balance clarity and efficiency.
+* It may be more efficient and still in the spirit of tags to have the defined-record tag define a separate tag number for each record definition (rather than using an id within tag(106)). With this approach, the referenced-record tags wouldn't need an extra element for an id, the tag number would indicate which record definition is being (re)used, and the array would simply be property values. We could allocate a range of tags that are available for record definitions (perhaps 3000-3500). Or use First Come First Served tag numbers. Or perhaps it is not even necessary to have allocated range, since encoders could allocate tag numbers from any space it isn't currently using for known tag extensions. 
+* Perhaps there should be a set limit on the number of ids that can be used rather than relying on good faith of encoders to not use too many ids.
