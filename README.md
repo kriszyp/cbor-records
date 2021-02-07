@@ -69,7 +69,25 @@ We can encode this with an array, and using a defined-record for the first eleme
          65 "three" # string("three")
          03       # unsigned(3)
 ```
-
+The intermediary representation would be:
+```
+[
+   tag(105)[
+      ["name", "value"],
+      26880
+      "one",
+      1
+   ],
+   tag(26880)[
+      "two",
+      2
+   ],
+   tag(26880)[
+      "three",
+      3
+   ],
+]
+```
 ### Considerations and Alternatives
 
 * There are certainly alternate ways of structuring the arrays that could be used, but this attempts to balance clarity and efficiency.
