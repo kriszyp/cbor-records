@@ -49,43 +49,43 @@ Let's consider how we could encode the following JSON using CBOR with the record
 ```
 We can encode this with an array, and using a defined-record for the first element in the array:
 ```
-83                # array(3)
-   d8 69          # tag(105) - defined-record
-      84          # array(4)
-         82       # array(2) - record definition
-            64 "name" # string("name")
-            65 "value" # string("value")
-         19       # unsigned 16-bit uint
-            69 00 # tag id of 26880
-                  # record values:
-         63 "one" # string("one")
-         01       # unsigned(1)
-   d9 69 00       # tag(26880) - referenced-record
-      83          # array(2)
-         63 "two" # string("two")
-         02       # unsigned(2)
-   d9 69 00       # tag(26880) - referenced-record
-      82          # array(2)
-         65 "three" # string("three")
-         03       # unsigned(3)
+83                -- array(3)
+   d8 69          -- tag(105) - defined-record
+      84          -- array(4)
+         82       -- array(2) - record definition
+            64 "name" -- string("name")
+            65 "value" -- string("value")
+         19       -- unsigned 16-bit uint
+            69 00 -- tag id of 26880
+                  -- record values:
+         63 "one" -- string("one")
+         01       -- unsigned(1)
+   d9 69 00       -- tag(26880) - referenced-record
+      83          -- array(2)
+         63 "two" -- string("two")
+         02       -- unsigned(2)
+   d9 69 00       -- tag(26880) - referenced-record
+      82          -- array(2)
+         65 "three" -- string("three")
+         03       -- unsigned(3)
 ```
-The intermediary representation would be:
+The generic data model representation would be:
 ```
 [
-   tag(105)[
-      ["name", "value"],
-      26880
+   tag(105): array(4):[
+      array(2):["name", "value"],
+      26880,
       "one",
       1
    ],
-   tag(26880)[
+   tag(26880): array(2):[
       "two",
       2
    ],
-   tag(26880)[
+   tag(26880): array(2):[
       "three",
       3
-   ],
+   ]
 ]
 ```
 ### Considerations and Alternatives
