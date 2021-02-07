@@ -50,7 +50,7 @@ Let's consider how we could encode the following JSON using CBOR with the record
 We can encode this with an array, and using a defined-record for the first element in the array:
 ```
 83                -- array(3)
-   d8 69          -- tag(105) - defined-record
+   D8 69          -- tag(105) - defined-record
       84          -- array(4)
          82       -- array(2) - record definition
             64 "name" -- string("name")
@@ -60,11 +60,11 @@ We can encode this with an array, and using a defined-record for the first eleme
                   -- record values:
          63 "one" -- string("one")
          01       -- unsigned(1)
-   d9 69 00       -- tag(26880) - referenced-record
+   D9 69 00       -- tag(26880) - referenced-record
       83          -- array(2)
          63 "two" -- string("two")
          02       -- unsigned(2)
-   d9 69 00       -- tag(26880) - referenced-record
+   D9 69 00       -- tag(26880) - referenced-record
       82          -- array(2)
          65 "three" -- string("three")
          03       -- unsigned(3)
@@ -92,5 +92,5 @@ The generic data model representation would be:
 
 * There are certainly alternate ways of structuring the arrays that could be used, but this attempts to balance clarity and efficiency.
 * This could be specified with just two tags, instead of a range, but this would result in a more complicated procedure referencing record as opposed to this approach.
-* The range selection is intentionally based on the aesthetics of reserving tags 0xd8 0x69 and 0xd9 0x69 [...].
+* The range selection is intentionally based on the aesthetics of reserving tags 0xD8 0x69 and 0xD9 0x69 [...].
 
