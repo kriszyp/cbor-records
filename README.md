@@ -12,7 +12,7 @@
 * Reference: https://github.com/kriszyp/cbor-records
 * Contact: Kris Zyp <kriszyp@gmail.com>
 
-#### Tag: 36352 - 36863 (record-reference)
+### Tag: 36352 - 36863 (record-reference)
 * Data Item: array
 * Semantics: References a defined record structure, using that referenced record definition to interpret the included values.
 * Reference: https://github.com/kriszyp/cbor-records
