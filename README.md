@@ -12,8 +12,11 @@
 * Reference: https://github.com/kriszyp/cbor-records
 * Contact: Kris Zyp <kriszyp@gmail.com>
 
-#### User dynamic tags (record-reference)
-This proposal includes explicit declaration of tags that an encoder specifies, but these are specified by the encoder and do not require any a priori knowledge by decoders, nor global registration or coordination.
+#### Tag: 36352 - 36863 (record-reference)
+* Data Item: array
+* Semantics: References a defined record structure, using that referenced record definition to interpret the included values.
+* Reference: https://github.com/kriszyp/cbor-records
+* Contact: Kris Zyp <kriszyp@gmail.com>
 
 ## Rationale
 
@@ -36,8 +39,7 @@ The tag value should be an array. The length of the array should be N+2 where N 
 
 The first element in the array should be an integer specifying the tag id to use for the subsequent record structure. The second element should be the record structure, which should be array of property names. If there are more than three elements in the array, any element before the last element (holding the primary data item) should be an array that also specifies record structures, and each record structure is assigned a tag id that is one greater than the previous record structure.
 
-The tag ids to be assigned to records for referencing can be determined by the encoder, and may be assigned to avoid tag ids in use for other purposes. It is may be easier for an encoder to use unassigned first-come first-serve tag ids (the 32768 - 49999 range).
-
+The tag ids to be assigned to records for referencing should be in the range of 36352 to 36863.
 
 ### inline-record
 The tag value should be an array, with N+2 elements, where N is the number of properties in the record/object instance to be encoded. The first array element should be the should be the record definition tag id (used to reference it later, from a unambiguously subsequent position in the document). This tag id becomes associated with the record definition, so it can later be referenced. The second array element should be the record structure definition array that is the sequence of property names (each element of the nested array is a property name). All subsequent elements in the array should be the property values of the current record being encoded, corresponding to the property names, by position, as defined in the record definition array. A decoder that is decoding record structure tags should return this record instance (and store the record definition).
@@ -68,20 +70,20 @@ We can encode this with an array, and use record-definitions around the array:
 D9 72 64             -- tag(29284) - record-definitions
    83                -- array(3)
       19             -- unsigned 16-bit uint
-         80 00       -- assign tag id of 32768
+         8E 00       -- assign tag id of 36352
       82             -- array(2) - record structure definition
          64 "name"   -- string("name")
          65 "value"  -- string("value")
       83             -- array(3)
-         D9 80 00    -- tag(32768) - record-reference
+         D9 8E 00    -- tag(36352) - record-reference
             83       -- array(2)
                63 "one" -- string("one")
                01    -- unsigned(1)
-         D9 80 00    -- tag(32768) - record-reference
+         D9 8E 00    -- tag(36352) - record-reference
             83       -- array(2)
                63 "two" -- string("two")
                02    -- unsigned(2)
-         D9 80 00    -- tag(32768) - record-reference
+         D9 8E 00    -- tag(36352) - record-reference
             82       -- array(2)
                65 "three" -- string("three")
                03    -- unsigned(3)
@@ -90,18 +92,18 @@ The generic data model representation would be:
 ```
 [
    tag(29284): array(4):[
-      32768,
+      36352,
       array(2):["name", "value"],
       array(3):[
-         tag(32768): array(2):[
+         tag(36352): array(2):[
             "one",
             1
          ],
-         tag(32768): array(2):[
+         tag(36352): array(2):[
             "two",
             2
          ],
-         tag(32768): array(2):[
+         tag(36352): array(2):[
             "three",
             3
          ]
@@ -118,15 +120,15 @@ Alternately, we can encode this with an array, and use an inline-record for the 
             64 "name" -- string("name")
             65 "value" -- string("value")
          19       -- unsigned 16-bit uint
-            80 00 -- tag id of 32768
+            8E 00 -- tag id of 36352
                   -- record values:
          63 "one" -- string("one")
          01       -- unsigned(1)
-   D9 80 00       -- tag(32768) - record-reference
+   D9 8E 00       -- tag(36352) - record-reference
       83          -- array(2)
          63 "two" -- string("two")
          02       -- unsigned(2)
-   D9 80 00       -- tag(32768) - record-reference
+   D9 8E 00       -- tag(36352) - record-reference
       82          -- array(2)
          65 "three" -- string("three")
          03       -- unsigned(3)
@@ -136,18 +138,21 @@ The generic data model representation would be:
 [
    tag(29284): array(4):[
       array(2):["name", "value"],
-      32768,
+      36352,
       "one",
       1
    ],
-   tag(32768): array(2):[
+   tag(36352): array(2):[
       "two",
       2
    ],
-   tag(32768): array(2):[
+   tag(36352): array(2):[
       "three",
       3
    ]
 ]
 ```
 
+#### Notes
+
+There is some rationale for dynamic assignement of tag ids, that due to the explicit assignment of tag ids, that encoders and decoders could use tags outside of the prescribed range by understanding that the tag id assignments are temporary and locally scoped to the data item declared such id usage, and if any tag id is assigned by an encoder that conflicts with an existing tag id understood by a decoder, the decoder should intepret that tag as defined by the encoder for the scope of that data item (or within the scope of the record-definitions value). However, this is considered to be too onerous of requirement for decoders to be included in this specification, and therefore conformant encoders should constrain tag id assignment to the range specified here, of 36352 to 36863.
