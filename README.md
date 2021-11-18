@@ -116,11 +116,11 @@ Alternately, we can encode this with an array, and use an inline-record for the 
 83                -- array(3)
    D9 72 64       -- tag(29284) - record-definition
       84          -- array(4)
+         19       -- unsigned 16-bit uint
+            E0 00 -- tag id of 57344
          82       -- array(2) - record definition
             64 "name" -- string("name")
             65 "value" -- string("value")
-         19       -- unsigned 16-bit uint
-            E0 00 -- tag id of 57344
                   -- record values:
          63 "one" -- string("one")
          01       -- unsigned(1)
@@ -137,8 +137,8 @@ The generic data model representation would be:
 ```
 [
    tag(29284): array(4):[
-      array(2):["name", "value"],
       57344,
+      array(2):["name", "value"],
       "one",
       1
    ],
