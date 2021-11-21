@@ -1,18 +1,18 @@
 ## Registration Information
 
-### Tag: 29284 (record-definitions)
+### Tag: 57342 (record-definitions)
 * Data Item: array
 * Semantics: Identify and define a set of record structures (each a sequences of property names) that can be referenced as tags in the included value (and the scope for the record tag definitions)
 * Reference: https://github.com/kriszyp/cbor-records
 * Contact: Kris Zyp <kriszyp@gmail.com>
 
-### Tag: 29285 (inline-record)
+### Tag: 57343 (inline-record)
 * Data Item: array
 * Semantics: Identify and define a record structure (a sequence of property names), and use that record structure definition to interpret the included values.
 * Reference: https://github.com/kriszyp/cbor-records
 * Contact: Kris Zyp <kriszyp@gmail.com>
 
-### Tag: 57344 - 57855 (record-reference)
+### Tag: 57344 - 57599 (record-reference)
 * Data Item: array
 * Semantics: References a defined record structure, using that referenced record definition to interpret the included values.
 * Reference: https://github.com/kriszyp/cbor-records
