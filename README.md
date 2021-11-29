@@ -67,7 +67,7 @@ Let's consider how we could encode the following JSON using CBOR with the record
 ```
 We can encode this with an array, and use record-definitions around the array:
 ```
-D9 72 64             -- tag(29284) - record-definitions
+D9 DF FE             -- tag(57342) - record-definitions
    83                -- array(3)
       19             -- unsigned 16-bit uint
          E0 00       -- assign tag id of 57344
@@ -91,7 +91,7 @@ D9 72 64             -- tag(29284) - record-definitions
 The generic data model representation would be:
 ```
 [
-   tag(29284): array(4):[
+   tag(57342): array(4):[
       57344,
       array(2):["name", "value"],
       array(3):[
@@ -114,7 +114,7 @@ The generic data model representation would be:
 Alternately, we can encode this with an array, and use an inline-record for the first element in the array:
 ```
 83                -- array(3)
-   D9 72 64       -- tag(29284) - record-definition
+   D9 DF FF       -- tag(57343) - inline-record
       84          -- array(4)
          19       -- unsigned 16-bit uint
             E0 00 -- tag id of 57344
@@ -136,7 +136,7 @@ Alternately, we can encode this with an array, and use an inline-record for the 
 The generic data model representation would be:
 ```
 [
-   tag(29284): array(4):[
+   tag(57343): array(4):[
       57344,
       array(2):["name", "value"],
       "one",
