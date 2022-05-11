@@ -2,7 +2,7 @@
 
 ### Tag: 57342 (record-definitions)
 * Data Item: array
-* Semantics: Identify and define a set of record structures (each a sequences of property names) that can be referenced as tags in the included value (and the scope for the record tag definitions)
+* Semantics: Identify and define a set of record structures (each a sequence of property names) that can be referenced as tags in the included value (and the scope for the record tag definitions)
 * Reference: https://github.com/kriszyp/cbor-records
 * Contact: Kris Zyp <kriszyp@gmail.com>
 
@@ -37,7 +37,7 @@ To encode and define a set of record/object structures for a data structure, use
 ### record-definitions
 The tag value should be an array. The length of the array should be N+2 where N is the number of record structure definitions that are defined. The last element in the array should always be interpreted as the primary data item (the main returned data item) from the tag, and this data item may include references to the defined record structures. The record structures are defined before this primary data item.
 
-The first element in the array should be an integer specifying the tag id to use for the subsequent record structure. The second element should be the record structure, which should be array of property names. If there are more than three elements in the array, any element before the last element (holding the primary data item) should be an array that also specifies record structures, and each record structure is assigned a tag id that is one greater than the previous record structure.
+The first element in the array should be an integer specifying the tag id to use for the subsequent record structure. The second element should be the record structure, which should be an array of property names. If there are more than three elements in the array, any element before the last element (holding the primary data item) should be an array that also specifies record structures, and each record structure is assigned a tag id that is one greater than the previous record structure.
 
 The tag ids to be assigned to records for referencing should be in the range of 57344 to 57599.
 
