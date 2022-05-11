@@ -94,18 +94,9 @@ In CBOR diagnostic notation (Section 8 of RFC 8949), this would be:
       57344,
       ["name", "value"],
       [
-         57344([
-            "one",
-            1
-         ]),
-         57344([
-            "two",
-            2
-         ]),
-         57344([
-            "three",
-            3
-         ])
+         57344([ "one",   1 ]),
+         57344([ "two",   2 ]),
+         57344([ "three", 3 ])
       ]
    ])
 ```
@@ -135,19 +126,12 @@ In CBOR diagnostic notation, this would be:
 ```
 [
    57343([
-      57344,
-      ["name", "value"],
-      "one",
-      1
+           57344,
+           ["name", "value"],
+           "one",   1
    ]),
-   57344([
-      "two",
-      2
-   ]),
-   57344([
-      "three",
-      3
-   ])
+   57344([ "two",   2 ]),
+   57344([ "three", 3 ])
 ]
 ```
 
