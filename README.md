@@ -88,28 +88,26 @@ D9 DF FE             -- tag(57342) - record-definitions
                65 "three" -- string("three")
                03    -- unsigned(3)
 ```
-The generic data model representation would be:
+In CBOR diagnostic notation (Section 8 of RFC 8949), this would be:
 ```
-[
-   tag(57342): array(4):[
+   57342([
       57344,
-      array(2):["name", "value"],
-      array(3):[
-         tag(57344): array(2):[
+      ["name", "value"],
+      [
+         57344([
             "one",
             1
-         ],
-         tag(57344): array(2):[
+         ]),
+         57344([
             "two",
             2
-         ],
-         tag(57344): array(2):[
+         ]),
+         57344([
             "three",
             3
-         ]
+         ])
       ]
-   ]
-]
+   ])
 ```
 Alternately, we can encode this with an array, and use an inline-record for the first element in the array:
 ```
@@ -133,23 +131,23 @@ Alternately, we can encode this with an array, and use an inline-record for the 
          65 "three" -- string("three")
          03       -- unsigned(3)
 ```
-The generic data model representation would be:
+In CBOR diagnostic notation, this would be:
 ```
 [
-   tag(57343): array(4):[
+   57343([
       57344,
-      array(2):["name", "value"],
+      ["name", "value"],
       "one",
       1
-   ],
-   tag(57344): array(2):[
+   ]),
+   57344([
       "two",
       2
-   ],
-   tag(57344): array(2):[
+   ]),
+   57344([
       "three",
       3
-   ]
+   ])
 ]
 ```
 
