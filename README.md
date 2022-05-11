@@ -32,14 +32,14 @@ This tag definition uses an approach of declaring the id of records when defined
 
 ## Description
 
-To encode and define a set of record/object structures for a data structure, use the record-definitions tag (29284). To encode and define a single record/object structure and an instance, use the inline-record tag (29285). To reference and use a defined record, use the record-reference tags (57344 to 57855).
+To encode and define a set of record/object structures for a data structure, use the record-definitions tag (57342). To encode and define a single record/object structure and an instance, use the inline-record tag (57343). To reference and use a defined record, use the record-reference tags (57344 to 57599).
 
 ### record-definitions
 The tag value should be an array. The length of the array should be N+2 where N is the number of record structure definitions that are defined. The last element in the array should always be interpreted as the primary data item (the main returned data item) from the tag, and this data item may include references to the defined record structures. The record structures are defined before this primary data item.
 
 The first element in the array should be an integer specifying the tag id to use for the subsequent record structure. The second element should be the record structure, which should be array of property names. If there are more than three elements in the array, any element before the last element (holding the primary data item) should be an array that also specifies record structures, and each record structure is assigned a tag id that is one greater than the previous record structure.
 
-The tag ids to be assigned to records for referencing should be in the range of 57344 to 57855.
+The tag ids to be assigned to records for referencing should be in the range of 57344 to 57599.
 
 ### inline-record
 The tag value should be an array, with N+2 elements, where N is the number of properties in the record/object instance to be encoded. The first array element should be the should be the record definition tag id (used to reference it later, from a unambiguously subsequent position in the document). This tag id becomes associated with the record definition, so it can later be referenced. The second array element should be the record structure definition array that is the sequence of property names (each element of the nested array is a property name). All subsequent elements in the array should be the property values of the current record being encoded, corresponding to the property names, by position, as defined in the record definition array. A decoder that is decoding record structure tags should return this record instance (and store the record definition).
