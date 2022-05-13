@@ -2,7 +2,7 @@
 
 ### Tag: 57342 (record-definitions)
 * Data Item: array
-* Semantics: Identify and define a set of record structures (each a sequences of property names) that can be referenced as tags in the included value (and the scope for the record tag definitions)
+* Semantics: Identify and define a set of record structures (each a sequence of property names) that can be referenced as tags in the included value (and the scope for the record tag definitions)
 * Reference: https://github.com/kriszyp/cbor-records
 * Contact: Kris Zyp <kriszyp@gmail.com>
 
@@ -25,27 +25,27 @@ In most languages, there is a significant and meaningful distinction between dyn
 * Defining and referencing/reusing a record structure is a much more space efficient encoding. Many data structures may include record/objects with the same structure, and re-serializing their entire set of property names for each instance is very inefficient. While the [stringref](http://cbor.schmorp.de/stringref) helps mitigate this, being able to simply reference the whole record structure is more efficient. The use of record structures can substantially decrease the size of encoded data structures.
 * Defining and referencing/reusing a record structure can also be much more performant. Besides the performance benefits of simply encoding fewer bytes, decoders can take advantage of optimizations based on knowing the data structure that will be used before reading the property values, which can yield significant benefits for constructing objects in many languages/environments.
 * This is designed to facilitate "streaming" encoders that may not know of all data structures prior to beginning encoding, or, for performance reasons, do not wish to expend unnecessary processing to "discover" all structures ahead of time, and can flexibly support up-front declaration of structures or inline just-in-time declarations.
-* This provides more flexibility for arrays of various data structures and nested reuse of data structures than is possible with column-based homogenous tables like those of [RFC-8746](https://tools.ietf.org/html/rfc8746).
+* This provides more flexibility for arrays of various data structures and nested reuse of data structures than is possible with column-based homogeneous tables like those of [RFC-8746](https://tools.ietf.org/html/rfc8746).
 * This aligns well with [CDDL](https://tools.ietf.org/html/rfc8610) which also has the concept of records, and allows for decoders to quickly pair records with structures declared in a CDDL definition.
 
 This tag definition uses an approach of declaring the id of records when defined, which gives encoders more flexibility in how they allocate, track, and reuse the ids.
 
 ## Description
 
-To encode and define a set of record/object structures for a data structure, use the record-definitions tag (29284). To encode and define a single record/object structure and an instance, use the inline-record tag (29285). To reference and use a defined record, use the record-reference tags (57344 to 57855).
+To encode and define a set of record/object structures for a data structure, use the record-definitions tag (57342). To encode and define a single record/object structure and an instance, use the inline-record tag (57343). To reference and use a defined record, use the record-reference tags (57344 to 57599).
 
 ### record-definitions
 The tag value should be an array. The length of the array should be N+2 where N is the number of record structure definitions that are defined. The last element in the array should always be interpreted as the primary data item (the main returned data item) from the tag, and this data item may include references to the defined record structures. The record structures are defined before this primary data item.
 
-The first element in the array should be an integer specifying the tag id to use for the subsequent record structure. The second element should be the record structure, which should be array of property names. If there are more than three elements in the array, any element before the last element (holding the primary data item) should be an array that also specifies record structures, and each record structure is assigned a tag id that is one greater than the previous record structure.
+The first element in the array should be an integer specifying the tag id to use for the subsequent record structure. The second element should be the record structure, which should be an array of property names. If there are more than three elements in the array, any element before the last element (holding the primary data item) should be an array that also specifies record structures, and each record structure is assigned a tag id that is one greater than the previous record structure.
 
-The tag ids to be assigned to records for referencing should be in the range of 57344 to 57855.
+The tag ids to be assigned to records for referencing should be in the range of 57344 to 57599.
 
 ### inline-record
 The tag value should be an array, with N+2 elements, where N is the number of properties in the record/object instance to be encoded. The first array element should be the should be the record definition tag id (used to reference it later, from a unambiguously subsequent position in the document). This tag id becomes associated with the record definition, so it can later be referenced. The second array element should be the record structure definition array that is the sequence of property names (each element of the nested array is a property name). All subsequent elements in the array should be the property values of the current record being encoded, corresponding to the property names, by position, as defined in the record definition array. A decoder that is decoding record structure tags should return this record instance (and store the record definition).
 
 ### record-reference
-To reuse the record definition and create another record/object instance using the same set of property names, we can reference the original record definition. This may be done from either within the primary data value in a record-defintions, or in a subsequent element in a CBOR array or a child/property-value of an inline-record. To reference a previously defined record definition, we use a tag with the tag id that corresponds to the id specified in the defined record. This can encode a record/object with the same structure, and referencing the previously defined record definition. The value for this tag should be an array, with N elements, where N is the number of properties in the record. Each element in the array should be the property values of the current record being encoded, corresponding to the property names, by position, as defined in the record definition array. The decoder should return the record/object instance.
+To reuse the record definition and create another record/object instance using the same set of property names, we can reference the original record definition. This may be done from either within the primary data value in a record-definitions, or in a subsequent element in a CBOR array or a child/property-value of an inline-record. To reference a previously defined record definition, we use a tag with the tag id that corresponds to the id specified in the defined record. This can encode a record/object with the same structure, and referencing the previously defined record definition. The value for this tag should be an array, with N elements, where N is the number of properties in the record. Each element in the array should be the property values of the current record being encoded, corresponding to the property names, by position, as defined in the record definition array. The decoder should return the record/object instance.
 
 When referencing a record definition from an inline-record, the inline-record must be in an unambiguously “earlier” position in the document than the record reference that references it. An earlier position can be defined as a lower position in an array element. A subsequent position is defined as a higher position in an array element. This position is also transitively applied to child values (they are “within” the position of their parent). Also, a parent record definition is defined as an earlier position than its child values (A child/property value may reference a record definition of its parent record). If a inline-record tag is used within a record-definitions tag/value, the scope of the defined record/tag is limited to inside that record-definitions tag.
 
@@ -88,28 +88,17 @@ D9 DF FE             -- tag(57342) - record-definitions
                65 "three" -- string("three")
                03    -- unsigned(3)
 ```
-The generic data model representation would be:
+In CBOR diagnostic notation (Section 8 of RFC 8949), this would be:
 ```
-[
-   tag(57342): array(4):[
+   57342([
       57344,
-      array(2):["name", "value"],
-      array(3):[
-         tag(57344): array(2):[
-            "one",
-            1
-         ],
-         tag(57344): array(2):[
-            "two",
-            2
-         ],
-         tag(57344): array(2):[
-            "three",
-            3
-         ]
+      ["name", "value"],
+      [
+         57344([ "one",   1 ]),
+         57344([ "two",   2 ]),
+         57344([ "three", 3 ])
       ]
-   ]
-]
+   ])
 ```
 Alternately, we can encode this with an array, and use an inline-record for the first element in the array:
 ```
@@ -133,26 +122,19 @@ Alternately, we can encode this with an array, and use an inline-record for the 
          65 "three" -- string("three")
          03       -- unsigned(3)
 ```
-The generic data model representation would be:
+In CBOR diagnostic notation, this would be:
 ```
 [
-   tag(57343): array(4):[
-      57344,
-      array(2):["name", "value"],
-      "one",
-      1
-   ],
-   tag(57344): array(2):[
-      "two",
-      2
-   ],
-   tag(57344): array(2):[
-      "three",
-      3
-   ]
+   57343([
+           57344,
+           ["name", "value"],
+           "one",   1
+   ]),
+   57344([ "two",   2 ]),
+   57344([ "three", 3 ])
 ]
 ```
 
 #### Notes
 
-There is some rationale for dynamic assignement of tag ids, that due to the explicit assignment of tag ids, that encoders and decoders could use tags outside of the prescribed range by understanding that the tag id assignments are temporary and locally scoped to the data item declared such id usage, and if any tag id is assigned by an encoder that conflicts with an existing tag id understood by a decoder, the decoder should intepret that tag as defined by the encoder for the scope of that data item (or within the scope of the record-definitions value). However, this is considered to be too onerous of requirement for decoders to be included in this specification, and therefore conformant encoders should constrain tag id assignment to the range specified here, of 57344 to 57599.
+There is some rationale for dynamic assignment of tag ids, that due to the explicit assignment of tag ids, that encoders and decoders could use tags outside of the prescribed range by understanding that the tag id assignments are temporary and locally scoped to the data item declared such id usage, and if any tag id is assigned by an encoder that conflicts with an existing tag id understood by a decoder, the decoder should interpret that tag as defined by the encoder for the scope of that data item (or within the scope of the record-definitions value). However, this is considered to be too onerous of requirement for decoders to be included in this specification, and therefore conformant encoders should constrain tag id assignment to the range specified here, of 57344 to 57599.
