@@ -49,7 +49,7 @@ To reuse the record definition and create another record/object instance using t
 
 When referencing a record definition from an inline-record, the inline-record must be in an unambiguously “earlier” position in the document than the record reference that references it. An earlier position can be defined as a lower position in an array element. A subsequent position is defined as a higher position in an array element. This position is also transitively applied to child values (they are “within” the position of their parent). Also, a parent record definition is defined as an earlier position than its child values (A child/property value may reference a record definition of its parent record). If a inline-record tag is used within a record-definitions tag/value, the scope of the defined record/tag is limited to inside that record-definitions tag.
 
-Inline record definitions can assign a tag id of a previously defined record (or an id of a tag used for different purposes), in which case the previously defined record/tag definition is discarded and replaced by the new record definition for that tag id, such that the record definition will be used by subsequent record references. The range of the tag ids limits the number of available records structures at any given point within a data item to 512, and encoders may choose to cycle through ids as necessary to stay with the specified range of tag ids. Encoders SHOULD NOT rely on the order of properties in any CBOR map for referencing a previously defined record, as relying on this order is NOT RECOMMENDED (per RFC-8949). However, since a record structure is represented with an array structure in a CBOR generic data model, referencing record structures from previous record values is deterministically indicated by array order, as defined by CBOR and specified above.
+Inline record definitions can assign a tag id of a previously defined record (or an id of a tag used for different purposes), in which case the previously defined record/tag definition is discarded and replaced by the new record definition for that tag id, such that the record definition will be used by subsequent record references. The range of the tag ids limits the number of available records structures at any given point within a data item to 256, and encoders may choose to cycle through ids as necessary to stay with the specified range of tag ids. Encoders SHOULD NOT rely on the order of properties in any CBOR map for referencing a previously defined record, as relying on this order is NOT RECOMMENDED (per RFC-8949). However, since a record structure is represented with an array structure in a CBOR generic data model, referencing record structures from previous record values is deterministically indicated by array order, as defined by CBOR and specified above.
 
 If the array of property values in a referenced record has fewer elements than the array property names, only the subset of property names that positionally align should be used.
 
@@ -76,11 +76,11 @@ D9 DF FE             -- tag(57342) - record-definitions
          65 "value"  -- string("value")
       83             -- array(3)
          D9 E0 00    -- tag(57344) - record-reference
-            83       -- array(2)
+            82       -- array(2)
                63 "one" -- string("one")
                01    -- unsigned(1)
          D9 E0 00    -- tag(57344) - record-reference
-            83       -- array(2)
+            82       -- array(2)
                63 "two" -- string("two")
                02    -- unsigned(2)
          D9 E0 00    -- tag(57344) - record-reference
@@ -114,7 +114,7 @@ Alternately, we can encode this with an array, and use an inline-record for the 
          63 "one" -- string("one")
          01       -- unsigned(1)
    D9 E0 00       -- tag(57344) - record-reference
-      83          -- array(2)
+      82          -- array(2)
          63 "two" -- string("two")
          02       -- unsigned(2)
    D9 E0 00       -- tag(57344) - record-reference
